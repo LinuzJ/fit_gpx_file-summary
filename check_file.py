@@ -2,12 +2,14 @@ import os
 
 def check_file_format(path):
     
-    list_of_valid_filenames = []
+    dict_of_valid_filenames = {}
     
     for filename in os.listdir(path):
-        if filename.endswith(".fit") or filename.endswith(".gpx"): 
-            list_of_valid_filenames.append(os.path.join(path,filename))
+        if filename.endswith(".fit"): 
+            dict_of_valid_filenames[os.path.join(path,filename)] = ".fit"
+        elif filename.endswith(".gpx"):
+            dict_of_valid_filenames[os.path.join(path,filename)] = ".gpx"
         else:
             continue
     
-    return list_of_valid_filenames
+    return dict_of_valid_filenames
