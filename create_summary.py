@@ -43,6 +43,7 @@ class Fit_Result:
         self.avg_speed = round(sum(speed)/len(speed))
         self.distance = distance/1000
         self.max_grade = max_grade
+        
 
 def print_result(result_object):
     print("____________________________________________________")
