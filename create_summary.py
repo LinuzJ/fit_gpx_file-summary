@@ -47,9 +47,9 @@ class Fit_Result:
 def print_result(result_object):
     print("____________________________________________________")
     print("                                                    ")
-    print("  Duration: %s         Distance: %a \n  Max HR: %s         Average HR: %s" % (result_object.time, result_object.distance, result_object.max_hr, result_object.avg_hr))
-
-
+    print("  Duration: %s         Distance: %a \n  Max HR: %s          Average HR: %s" % (result_object.time, result_object.distance, result_object.max_hr, result_object.avg_hr))
+    print("  Max Speed: %s        Average Speed: %s \n  Max grade: %s" % (result_object.max_speed, result_object.avg_speed, result_object.max_grade))
+    print("____________________________________________________")
 
 def summarize(activity, type):
     
