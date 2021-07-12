@@ -1,7 +1,21 @@
 import pathlib
 from check_file import check_file_format
 from create_summary import summarize
+import os
 
+def check_file_format(path):
+    
+    dict_of_valid_filenames = {}
+    
+    for filename in os.listdir(path):
+        if filename.endswith(".fit"): 
+            dict_of_valid_filenames[os.path.join(path,filename)] = ".fit"
+        elif filename.endswith(".gpx"):
+            dict_of_valid_filenames[os.path.join(path,filename)] = ".gpx"
+        else:
+            continue
+    
+    return dict_of_valid_filenames
 
 def create_summaries(path_to_this_dir):
     
