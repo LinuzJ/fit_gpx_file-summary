@@ -63,16 +63,36 @@ class Fit_Result:
 
 class Gpx_result:
     def __init__(self, gpx_file) -> None:
-        gpx_file_open = open(gpx_file, 'r')
+        # Metrics we want to evaluate
+        distance = 0
+        time = 0
+        max_speed = 0
+        avg_speed = 0
+        
+        # Collections to keep track of points
+        position_collection = []
+        time_collection = []
+        speed_collection = []
+        grade_collection = []
 
-        gpx = gpxpy.parse(gpx_file_open)
+        tree = ET.parse(gpx_file)
+        root = tree.getroot()
+        
+        Xpath  = "./{http://www.topografix.com/GPX/1/1}trk/{http://www.topografix.com/GPX/1/1}trkseg"
+        
+        for i in root.findall(Xpath):
+            for point in i:
+                position_collection.append((float(point.get("lat")), float(point.get("lon"))))
+                #print(point[0].text)
 
-        for track in gpx.tracks:
-            for segment in track.segments:
-                for point in segment.points:
-                    print(point.extensions[0].items())
+        zipped = list(zip(position_collection[1:-1], position_collection[0:-2]))
+        
+        position_collection = [calculate_distance(x[0][0], x[0][1], x[1][0], x[1][1]) for x in zipped]
+        
+        print(sum(position_collection))
 
-        self.gpx = gpx
+
+
 
 
 
