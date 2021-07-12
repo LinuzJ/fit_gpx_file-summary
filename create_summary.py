@@ -5,7 +5,7 @@ from fitparse import FitFile
 from datetime import datetime
 import xml.etree.ElementTree as ET
 
-
+# HEPLERS
 def calculate_duration(start, end):
     diff = end - start
     return int(round(diff.total_seconds() / 60))
@@ -24,6 +24,7 @@ def calculate_distance(lat_1, lng_1, lat_2, lng_2):
 
     return 6373.0 * (2 * math.atan2(math.sqrt(calculation), math.sqrt(1 - calculation)))
 
+# CLASSES FOR PGX AND FIT RESULTS
 class Fit_Result:
     def __init__(self, fit_file):
         # Metrics we want to evaluate
@@ -68,10 +69,10 @@ class Gpx_result:
         position_ = []
         time_ = []
         speed_ = []
-
+        
+        # Initiazing the parseing
         tree = ET.parse(gpx_file)
         root = tree.getroot()
-        
         Xpath  = "./{http://www.topografix.com/GPX/1/1}trk/{http://www.topografix.com/GPX/1/1}trkseg"
         
         for i in root.findall(Xpath):
@@ -79,11 +80,12 @@ class Gpx_result:
                 position_.append((float(point.get("lat")), float(point.get("lon"))))
                 time_.append(datetime.strptime(point[1].text, "%Y-%m-%dT%H:%M:%S%z"))
 
+        # Zipping coordinates to calculate distance
         zipped = list(zip(position_[1:-1], position_[0:-2]))
-        
         distance_ = [calculate_distance(x[0][0], x[0][1], x[1][0], x[1][1]) for x in zipped]
-        speed_    = [x*3.6 for x in distance_]
+        speed_    = [round(x*3.6) for x in distance_]
 
+        # declaring all of the variables
         self.time = calculate_duration(time_[0], time_[-1])
         self.max_hr = "N/A"
         self.avg_hr = "N/A"
@@ -99,8 +101,8 @@ def print_result(result_object):
     print("  Max Speed: %s        Average Speed: %s \n  Max grade: %s" % (result_object.max_speed, result_object.avg_speed, result_object.max_grade))
     print("____________________________________________________")
 
+# "MAIN" FUNCTION
 def summarize(activity, type):
-    
     if type == ".fit":
         result = Fit_Result(activity)
         print_result(result)
