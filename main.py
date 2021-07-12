@@ -4,7 +4,6 @@ from create_summary import summarize
 import os
 
 def check_file_format(path):
-    
     dict_of_valid_filenames = {}
     
     for filename in os.listdir(path):
