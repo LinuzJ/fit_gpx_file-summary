@@ -1,5 +1,3 @@
-import gpxpy
-import gpxpy.gpx
 import math
 from fitparse import FitFile
 from datetime import datetime
