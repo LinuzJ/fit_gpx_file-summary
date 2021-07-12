@@ -36,16 +36,16 @@ class Fit_Result:
         max_grade = 0
 
         # collections of data
-        hr = []
-        speed = []
-        time_collection = []
+        hr_ = []
+        speed_ = []
+        time_ = []
         
         fitfile = FitFile(fit_file)
         # Then go through all of the data entries in the file
         for data_message in fitfile.get_messages("record"):
-            hr.append(data_message.get_value("heart_rate"))
-            speed.append(data_message.get_value("speed"))
-            time_collection.append(data_message.get_value("timestamp"))
+            hr_.append(data_message.get_value("heart_rate"))
+            speed_.append(data_message.get_value("speed"))
+            time_.append(data_message.get_value("timestamp"))
 
             if data_message.get_value("grade") and data_message.get_value("grade") > max_grade:
                 max_grade = data_message.get_value("grade")
@@ -53,27 +53,21 @@ class Fit_Result:
             if data_message.get_value("distance") and data_message.get_value("distance") > max_grade:
                 distance = data_message.get_value("distance")
 
-        self.time = calculate_duration(time_collection[0], time_collection[-1])
-        self.max_hr = max(hr)
-        self.avg_hr = round(sum(hr)/len(hr))
-        self.max_speed = max(speed)
-        self.avg_speed = round(sum(speed)/len(speed))
+        self.time = calculate_duration(time_[0], time_[-1])
+        self.max_hr = max(hr_)
+        self.avg_hr = round(sum(hr_)/len(hr_))
+        self.max_speed = max(speed_)
+        self.avg_speed = round(sum(speed_)/len(speed_))
         self.distance = distance/1000
         self.max_grade = max_grade
 
 class Gpx_result:
     def __init__(self, gpx_file) -> None:
-        # Metrics we want to evaluate
-        distance = 0
-        time = 0
-        max_speed = 0
-        avg_speed = 0
         
         # Collections to keep track of points
-        position_collection = []
-        time_collection = []
-        speed_collection = []
-        grade_collection = []
+        position_ = []
+        time_ = []
+        speed_ = []
 
         tree = ET.parse(gpx_file)
         root = tree.getroot()
@@ -82,20 +76,21 @@ class Gpx_result:
         
         for i in root.findall(Xpath):
             for point in i:
-                position_collection.append((float(point.get("lat")), float(point.get("lon"))))
-                #print(point[0].text)
+                position_.append((float(point.get("lat")), float(point.get("lon"))))
+                time_.append(point.get("time"))
 
-        zipped = list(zip(position_collection[1:-1], position_collection[0:-2]))
+        zipped = list(zip(position_[1:-1], position_[0:-2]))
         
-        position_collection = [calculate_distance(x[0][0], x[0][1], x[1][0], x[1][1]) for x in zipped]
-        
-        print(sum(position_collection))
+        distance_ = [calculate_distance(x[0][0], x[0][1], x[1][0], x[1][1]) for x in zipped]
+        speed_    = [x*3.6 for x in distance_]
 
-
-
-
-
-
+        self.time = calculate_duration(time_[0], time_[-1])
+        self.max_hr = "N/A"
+        self.avg_hr = "N/A"
+        self.max_speed = max(speed_)
+        self.avg_speed = round(sum(speed_)/len(speed_))
+        self.distance = distance/1000
+        self.max_grade = "N/A"
 
 def print_result(result_object):
     print("____________________________________________________")
