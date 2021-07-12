@@ -4,7 +4,7 @@ import math
 from fitparse import FitFile
 from datetime import datetime
 import xml.etree.ElementTree as ET
-from xml.dom import minidom
+
 
 def calculate_duration(start, end):
     diff = end - start
@@ -77,7 +77,7 @@ class Gpx_result:
         for i in root.findall(Xpath):
             for point in i:
                 position_.append((float(point.get("lat")), float(point.get("lon"))))
-                time_.append(point.get("time"))
+                time_.append(datetime.strptime(point[1].text, "%Y-%m-%dT%H:%M:%S%z"))
 
         zipped = list(zip(position_[1:-1], position_[0:-2]))
         
@@ -87,9 +87,9 @@ class Gpx_result:
         self.time = calculate_duration(time_[0], time_[-1])
         self.max_hr = "N/A"
         self.avg_hr = "N/A"
+        self.distance = sum(distance_)
         self.max_speed = max(speed_)
-        self.avg_speed = round(sum(speed_)/len(speed_))
-        self.distance = distance/1000
+        self.avg_speed = self.distance/self.time
         self.max_grade = "N/A"
 
 def print_result(result_object):
@@ -106,4 +106,4 @@ def summarize(activity, type):
         print_result(result)
     elif type == ".gpx":
         result = Gpx_result(activity)
-        print("end")
+        print_result(result)
