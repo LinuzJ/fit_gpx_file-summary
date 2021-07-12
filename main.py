@@ -1,5 +1,4 @@
 import pathlib
-from check_file import check_file_format
 from create_summary import summarize
 import os
 

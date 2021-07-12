@@ -1,11 +1,28 @@
 import gpxpy
 import gpxpy.gpx
+import math
 from fitparse import FitFile
 from datetime import datetime
+import xml.etree.ElementTree as ET
+from xml.dom import minidom
 
 def calculate_duration(start, end):
     diff = end - start
     return int(round(diff.total_seconds() / 60))
+
+def calculate_distance(lat_1, lng_1, lat_2, lng_2): 
+    
+    d_lat = math.radians(lat_2) - math.radians(lat_1)
+    d_lng = math.radians(lng_2) - math.radians(lng_1) 
+
+    calculation = (  
+         math.sin(d_lat / 2) ** 2 
+       + math.cos(lat_1) 
+       * math.cos(lat_2) 
+       * math.sin(d_lng / 2) ** 2
+    )
+
+    return 6373.0 * (2 * math.atan2(math.sqrt(calculation), math.sqrt(1 - calculation)))
 
 class Fit_Result:
     def __init__(self, fit_file):
@@ -43,7 +60,22 @@ class Fit_Result:
         self.avg_speed = round(sum(speed)/len(speed))
         self.distance = distance/1000
         self.max_grade = max_grade
-        
+
+class Gpx_result:
+    def __init__(self, gpx_file) -> None:
+        gpx_file_open = open(gpx_file, 'r')
+
+        gpx = gpxpy.parse(gpx_file_open)
+
+        for track in gpx.tracks:
+            for segment in track.segments:
+                for point in segment.points:
+                    print(point.extensions[0].items())
+
+        self.gpx = gpx
+
+
+
 
 def print_result(result_object):
     print("____________________________________________________")
@@ -58,4 +90,5 @@ def summarize(activity, type):
         result = Fit_Result(activity)
         print_result(result)
     elif type == ".gpx":
-        pass
+        result = Gpx_result(activity)
+        print("end")
