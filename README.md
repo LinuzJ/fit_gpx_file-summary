@@ -1,5 +1,5 @@
 # fit_gpx_file-summary
-Simple Python script to summarize .fit and .gpz (the most commonly used files for sport activities)
+Simple Python script to summarize .fit and .gpx (the most commonly used files for sport activities)
 
 - To run the script, first clone the repo
    ```sh
